@@ -1,7 +1,7 @@
 const pgApi = {
   getSession: (client, channelId) => {
     const query = {
-      text: 'SELECT COUNT(channel_id) FROM public.zendesk_sessions WHERE channel_id = $1',
+      text: 'SELECT * FROM public.zendesk_sessions WHERE channel_id = $1 LIMIT 1',
       values: [channelId]
     };
     return client.query(query);

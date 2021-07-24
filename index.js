@@ -139,7 +139,7 @@ app.listen(process.env.PORT || 8301, () => {
           if (sender.__typename === TYPE.VISITOR) {
             pgApi.getSession(client, channelId)
             .then((result) => {
-              const count = +result.rows[0].count;
+              const count = result.rows.length;
               if (!count) {
                 // we don't have an active session,
                 // create session and trigger Twilio Studio context
@@ -152,6 +152,7 @@ app.listen(process.env.PORT || 8301, () => {
               // execute Twilio flow
               console.log(channelId)
               console.log(message)
+              console.log(result.rows[0])
               // if session != inactive and still in the Studio - execute flow
               if (!result.rows[0].status == 'inactive') {
                 Twilio.executeFlow(TwilioClient, channelId, message);
