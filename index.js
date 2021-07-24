@@ -153,7 +153,7 @@ app.listen(process.env.PORT || 8301, () => {
               console.log(channelId)
               console.log(message)
               // if session != inactive and still in the Studio - execute flow
-              if (!results.rows[0].status == 'inactive') {
+              if (!result.rows[0].status == 'inactive') {
                 Twilio.executeFlow(TwilioClient, channelId, message);
               }
             })
