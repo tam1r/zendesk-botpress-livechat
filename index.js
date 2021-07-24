@@ -121,7 +121,7 @@ app.listen(process.env.PORT || 8301, () => {
           const channelToBeTransferred = channelsToBeTransferred.pop();
           Zendesk.transferToDepartment(webSocket, channelToBeTransferred, data);
           // update session status
-          pgApi.updateSession(client, channelToBeTransferred, 'inactive');
+          pgApi.setSessionStatus(client, channelToBeTransferred, 'inactive');
         }
       
         // Listen to chat messages from the visitor
