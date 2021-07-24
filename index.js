@@ -146,16 +146,18 @@ app.listen(process.env.PORT || 8301, () => {
                 pgApi.createSession(client, channelId, sender.display_name)
                   .then(() => {
                     console.log('session created, ' + sender.display_name)
+                    Twilio.executeFlow(TwilioClient, channelId, message);
                   })
                   .catch(err => console.log(err));
-              }
-              // execute Twilio flow
-              console.log(channelId)
-              console.log(message)
-              console.log(result.rows[0])
-              // if session != inactive and still in the Studio - execute flow
-              if (count && result.rows[0].status !== 'inactive') {
-                Twilio.executeFlow(TwilioClient, channelId, message);
+              } else {
+                // execute Twilio flow
+                // console.log(channelId)
+                // console.log(message)
+                // console.log(result.rows[0])
+                // if session != inactive and still in the Studio - execute flow
+                if (result.rows[0].status !== 'inactive') {
+                  Twilio.executeFlow(TwilioClient, channelId, message);
+                }
               }
             })
             .catch((err) => console.log(err));
