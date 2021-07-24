@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run stop && concurrently \"nodemon index.js\" \"npm run expose\"",
+    "start": "node index.js",
+    "dev": "npm run stop && concurrently \"nodemon index.js\" \"npm run expose\"",
     "expose": "ngrok http 8301",
     "stop": "kill-port 8301"
   },
