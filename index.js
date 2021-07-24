@@ -120,8 +120,8 @@ app.listen(process.env.PORT || 8301, () => {
           // transferring to department with real agent
           const channelToBeTransferred = channelsToBeTransferred.pop();
           Zendesk.transferToDepartment(webSocket, channelToBeTransferred, data);
-          // removing session from database
-          pgApi.deleteSession(client, channelToBeTransferred);
+          // update session status
+          pgApi.updateSession(client, channelToBeTransferred, 'inactive');
         }
       
         // Listen to chat messages from the visitor
@@ -152,7 +152,10 @@ app.listen(process.env.PORT || 8301, () => {
               // execute Twilio flow
               console.log(channelId)
               console.log(message)
-              Twilio.executeFlow(TwilioClient, channelId, message);
+              // if session != inactive and still in the Studio - execute flow
+              if (!results.rows[0].status == 'inactive') {
+                Twilio.executeFlow(TwilioClient, channelId, message);
+              }
             })
             .catch((err) => console.log(err));
 

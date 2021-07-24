@@ -23,6 +23,14 @@ const pgApi = {
       values: [channelId],
     };
     return client.query(insert);
+  },
+
+  setSessionStatus: (client, channelId, status) => {
+    const update = {
+      text: 'UPDATE public.zendesk_sessions SET status = $2 WHERE channel_id = $1',
+      values: [channelId, status],
+    };
+    return client.query(update);
   }
 };
 
