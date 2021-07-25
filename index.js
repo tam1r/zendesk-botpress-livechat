@@ -82,21 +82,21 @@ app.listen(process.env.PORT || 8301, () => {
             })
           );
           // for later use if needed - update agent status to online if invisible
-          // const updateAgentStatusQuery = {
-          //   payload: {
-          //     query: `mutation {
-          //                 updateAgentStatus(status: ONLINE) {
-          //                     node {
-          //                         id
-          //                     }
-          //                 }
-          //             }`
-          //   },
-          //   type: "request",
-          //   id: REQUEST_ID.UPDATE_AGENT_STATUS
-          // };
-          // webSocket.send(JSON.stringify(updateAgentStatusQuery));
-          // console.log("[updateAgentStatus] Request sent");
+          const updateAgentStatusQuery = {
+            payload: {
+              query: `mutation {
+                          updateAgentStatus(status: ONLINE) {
+                              node {
+                                  id
+                              }
+                          }
+                      }`
+            },
+            type: "request",
+            id: REQUEST_ID.UPDATE_AGENT_STATUS
+          };
+          webSocket.send(JSON.stringify(updateAgentStatusQuery));
+          console.log("[updateAgentStatus] Request sent");
         }, 5000);
 
         // subscribe to livechat
