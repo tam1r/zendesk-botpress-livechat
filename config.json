@@ -2,8 +2,12 @@
   "LIVE_CHAT_AUTH_TOKEN": "UPc3LiqNNGWvsRwKnqVHMWdqR8jB4YjYVIwy1QuRXClStpXlgFY592G6KEo1U0Q9",
   "CLIENT_ID": "EYesuzKBKnKAf1JwkpcEpknpBuB4p1SBrBfYHVUSrrCDMR2SYY",
   "CLIENT_SECRET": "9dhABACSbL5j6ZIAPgdmTuetVEsuwBD1KKkASUtGMVmNftb4w6g0GNZSGYUeHWyY",
+  
   "TWILIO_ACCOUNT_SID": "AC46b8b0ada0c93422be6c364cef7a7400",
   "TWILIO_AUTH_TOKEN": "ca6e4c348b70a4046827fe8ff8ed8052",
   "TWILIO_FLOW_1_ID": "FWad74e423fb49c5aedcc31dff39945d75",
-  "TWILIO_FLOW_1_ENDPOINT": "https://studio.twilio.com/v2/Flows/FWad74e423fb49c5aedcc31dff39945d75/Executions"
+  "TWILIO_FLOW_1_ENDPOINT": "https://studio.twilio.com/v2/Flows/FWad74e423fb49c5aedcc31dff39945d75/Executions",
+
+  "BOTPRESS_BOT_URL": "https://adelante-botpress.herokuapp.com/api/v1/bots/",
+  "BOTPRESS_BOT_NAME": "adelante-1"
 }

@@ -85,7 +85,7 @@ const Zendesk = {
 
       const allDepartments = data.payload.data.departments.edges;
       const onlineDepartments = allDepartments.filter(
-        department => department.node.status === "ONLINE"
+        department => department.node.status === "ONLINE" && department.node.name !== 'Chatbot'
       );
       console.log(allDepartments)
 

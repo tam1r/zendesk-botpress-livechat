@@ -13,6 +13,8 @@ const twilio = require('twilio');
 const Twilio = require('./twilio');
 const util = require('util');
 const request = require('superagent');
+const BotpressFunctions = require('./botpress');
+const he = require('he');
 
 // global variable for transferred channel id
 const channelsToBeTransferred = [];
@@ -96,7 +98,7 @@ app.listen(process.env.PORT || 8301, () => {
             id: REQUEST_ID.UPDATE_AGENT_STATUS
           };
           webSocket.send(JSON.stringify(updateAgentStatusQuery));
-          console.log("[updateAgentStatus] Request sent");
+          // console.log("[updateAgentStatus] Request sent");
         }, 5000);
 
         // subscribe to livechat
@@ -142,21 +144,19 @@ app.listen(process.env.PORT || 8301, () => {
               const count = result.rows.length;
               if (!count) {
                 // we don't have an active session,
-                // create session and trigger Twilio Studio context
+                // create session and trigger Botpress context
                 pgApi.createSession(client, channelId, sender.display_name)
                   .then(() => {
                     console.log('session created, ' + sender.display_name)
-                    Twilio.executeFlow(TwilioClient, channelId, message);
+                    BotpressFunctions.sendToBot(channelId, message)
+                      .then((responses) => responses.forEach(val => Zendesk.sendMessage(webSocket, channelId, val.text)));
                   })
                   .catch(err => console.log(err));
               } else {
-                // execute Twilio flow
-                // console.log(channelId)
-                // console.log(message)
-                // console.log(result.rows[0])
-                // if session != inactive and still in the Studio - execute flow
+                // if session != inactive and still in the Botpress - execute flow
                 if (result.rows[0].status !== 'inactive') {
-                  Twilio.executeFlow(TwilioClient, channelId, message);
+                  BotpressFunctions.sendToBot(channelId, message)
+                    .then((responses) => responses.forEach(val => Zendesk.sendMessage(webSocket, channelId, val.text)));
                 }
               }
             })
@@ -176,15 +176,20 @@ app.listen(process.env.PORT || 8301, () => {
 
 app.post("/zendesk/sendMessage", (req, res, next) => {
   console.log(req.body)
-  if (req.body.message === 'Hold on! Operator is on the way!') {
-    // handing over to operator
-    channelsToBeTransferred.push(req.body.channelId);
-    // sending getDepartments request to Zendesk
-    Zendesk.getDepartments(webSocket);
-  }
+  const decodedChannelId = he.decode(req.body.channelId);
   console.log('COMPOSING A MESSAGE======')
   // proxying message back to visitor
-  Zendesk.sendMessage(webSocket, req.body.channelId, req.body.message);
+  Zendesk.sendMessage(webSocket, decodedChannelId, req.body.message);
+  res.json('Test');
+});
+
+app.post("/zendesk/handover", (req, res, next) => {
+  // handing over to operator
+  // decoding id as Botpress decodes channelId html characters
+  const decodedChannelId = he.decode(req.body.channelId);
+  channelsToBeTransferred.push(decodedChannelId);
+  // sending getDepartments request to Zendesk
+  Zendesk.getDepartments(webSocket);
   res.json('Test');
 });
 
