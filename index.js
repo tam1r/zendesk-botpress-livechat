@@ -139,6 +139,7 @@ app.listen(process.env.PORT || 8301, () => {
 
           // console.log(chatMessage)
           if (sender.__typename === TYPE.VISITOR) {
+            console.log("VISITOR")
             pgApi.getSession(client, channelId)
             .then((result) => {
               const count = result.rows.length;
@@ -149,18 +150,30 @@ app.listen(process.env.PORT || 8301, () => {
                   .then(() => {
                     console.log('session created, ' + sender.display_name)
                     BotpressFunctions.sendToBot(channelId, message)
-                      .then((responses) => responses.forEach(val => Zendesk.sendMessage(webSocket, channelId, val.text)));
+                      .then((responses) => responses.forEach(val => {
+                        if (val?.quick_replies?.length) {
+                          Zendesk.sendStructuredMessage(webSocket, channelId, val.text, val.quick_replies);
+                        } else {
+                          Zendesk.sendMessage(webSocket, channelId, val.text);
+                        }
+                      }));
                   })
-                  .catch(err => console.log(err));
+                  .catch(err => console.log('error1' + err));
               } else {
                 // if session != inactive and still in the Botpress - execute flow
                 if (result.rows[0].status !== 'inactive') {
                   BotpressFunctions.sendToBot(channelId, message)
-                    .then((responses) => responses.forEach(val => Zendesk.sendMessage(webSocket, channelId, val.text)));
+                    .then((responses) => responses.forEach(val => {
+                      if (val?.quick_replies?.length) {
+                        Zendesk.sendStructuredMessage(webSocket, channelId, val.text, val.quick_replies);
+                      } else {
+                        Zendesk.sendMessage(webSocket, channelId, val.text);
+                      }
+                    }));
                 }
               }
             })
-            .catch((err) => console.log(err));
+            .catch((err) => console.log('error2' + err));
 
             console.log(
               `[message] Received: '${chatMessage.content}' from: '${

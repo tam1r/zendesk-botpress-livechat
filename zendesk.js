@@ -1,6 +1,7 @@
 const REQUEST_ID = {
   MESSAGE_SUBSCRIPTION: 'subscription',
   SEND_MESSAGE: 'sendMessage',
+  SEND_QUICK_REPLIES: 'sendQuickReplies',
   GET_DEPARTMENTS: 'getDepartments',
   TRANSFER_TO_DEPARTMENT: 'transferToDepartment',
   UPDATE_AGENT_STATUS: 'updateAgentStatus'
@@ -51,8 +52,42 @@ const Zendesk = {
       type: 'request',
       id: REQUEST_ID.SEND_MESSAGE
     };
+    webSocket.send(JSON.stringify(sendMessageQuery), (err) => console.log(err));
+  },
 
-    webSocket.send(JSON.stringify(sendMessageQuery));
+  sendStructuredMessage: (webSocket, channelId, message, quickReplies) => {
+    const sendQuickRepliesQuery = {
+      payload: {
+        query: `mutation (
+          $channel_id: ID!,
+          $msg: String!,
+          $quick_replies: [QuickReplyButtonInput!]!,
+          $fallback: StructuredMessageFallbackInput
+        ){
+          sendQuickReplies(
+            channel_id: $channel_id,
+            msg: $msg,
+            quick_replies: $quick_replies,
+            fallback: $fallback
+          ) {
+            success
+          }
+        }`,
+        variables: {
+          channel_id: channelId,
+          msg: message,
+          quick_replies: quickReplies,
+          fallback: {
+            msg: message,
+            options: quickReplies.map(val => val.text)
+          }
+        }
+      },
+      type: 'request',
+      id: REQUEST_ID.SEND_QUICK_REPLIES
+    };
+
+    webSocket.send(JSON.stringify(sendQuickRepliesQuery), (err) => console.log(err));
   },
 
   getDepartments: (webSocket) => {
